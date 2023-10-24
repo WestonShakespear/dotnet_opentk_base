@@ -159,7 +159,6 @@ namespace Program
             bool rotate = mouse[MouseButton.Middle] && input.IsKeyDown(Keys.LeftControl);
             bool pan = mouse[MouseButton.Middle] && !input.IsKeyDown(Keys.LeftControl);
 
-
             
 
             if (pan)

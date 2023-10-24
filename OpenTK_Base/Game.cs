@@ -1,7 +1,10 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Mathematics;
+using OpenTK.Input;
+using OpenTK;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Program
@@ -9,7 +12,24 @@ namespace Program
     public class Game : GameWindow
     {
 
-        
+        static Vector3 WorldUp = Vector3.UnitY;
+
+        // static Vector3 CameraPosition = new Vector3(0.0f, 0.0f, 3.0f);
+        // static Vector3 CameraTarget = Vector3.Zero;
+        // static Vector3 CameraDirection = Vector3.Normalize(CameraDirection - CameraTarget);
+        // static Vector3 CameraRight = Vector3.Normalize(Vector3.Cross(WorldUp, CameraDirection));
+        // static Vector3 CameraUp = Vector3.Cross(CameraDirection, CameraRight);
+
+        // static Vector3 PlayerPosition = new Vector3(0.0f, 0.0f, 3.0f);
+        // static Vector3 PlayerFront = new Vector3(0.0f, 0.0f, -1.0f);
+        // static Vector3 PlayerUp = new Vector3(0.0f, 1.0f, 0.0f);
+
+        Camera camera;
+
+        const float PLAYER_SPEED = 0.5f;
+
+        int WindowWidth;
+        int WindowHeight;
 
         uint[] tri_indices =
         {
@@ -22,6 +42,10 @@ namespace Program
         int VertexDataBufferObject;
         int ElementBufferObject;
         int VertexArrayObject;
+
+        int VertexDataBufferObject2;
+        int ElementBufferObject2;
+        int VertexArrayObject2;
         
         Shader shader;
 
@@ -34,6 +58,10 @@ namespace Program
             shader = new Shader("shader.vert", "shader.frag");
 
             this.UpdateFrequency = FPS;
+            this.WindowWidth = width;
+            this.WindowHeight = height;
+            this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
+
         }
 
         
@@ -46,15 +74,18 @@ namespace Program
             GL.ClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 
             float[] square_size = { -0.5f, 0.5f, 1.0f, 1.0f };
+            float[] square_size2 = { -1.0f, 1.0f, 0.5f, 0.5f };
 
             // Load the shader
             MakeSquare(square_size, ref VertexArrayObject, ref VertexDataBufferObject, ref ElementBufferObject);
+            MakeSquare(square_size2, ref VertexArrayObject2, ref VertexDataBufferObject2, ref ElementBufferObject2);
             
            
         }
 
-        public static float rotationX = 0.0f;
-        public static float rotationY = 0.0f;
+
+
+        private Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
         
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -69,18 +100,21 @@ namespace Program
             int vertexColorLocation = GL.GetUniformLocation(shader.Handle, "ourColor");
             GL.Uniform4(vertexColorLocation, 0.992f, 0.974f, 0.89f, 1.0f);
 
-            Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(rotationX));
-            model *= Matrix4.CreateRotationY(MathHelper.DegreesToRadians(rotationY));
 
-            Matrix4 view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), Size.X / (float) Size.Y, 0.1f, 100.0f);
+            float x_rotation = MathHelper.DegreesToRadians(this.ModelRotation.X);
+            float y_rotation = MathHelper.DegreesToRadians(this.ModelRotation.Y);
+
+            Matrix4 model = Matrix4.CreateRotationX(x_rotation);
+            model *= Matrix4.CreateRotationY(y_rotation);
+
 
             shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", view);
-            shader.SetMatrix4("projection", projection);
+            shader.SetMatrix4("view", this.camera.GetViewMatrix());
+            shader.SetMatrix4("projection", this.camera.GetProjectionMatrix());
 
 
             DrawSquare(ref VertexArrayObject);
+            DrawSquare(ref VertexArrayObject2);
 
             // GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
@@ -89,47 +123,127 @@ namespace Program
             SwapBuffers();
         }
 
+        private bool _firstMove = true;
+        private Vector2 _lastPos;
+        const float cameraSpeed = 1.5f;
+        
+        float RotationSensitivity = 0.6f;
+
+        bool MiddleMouse = false;
+
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
 
             KeyboardState input = KeyboardState;
+            MouseState mouse = MouseState;
 
-            float amount = 0.2f;
-
-            if (input.IsKeyDown(Keys.Right))
+            if (!IsFocused) // Check to see if the window is focused
             {
-                rotationY += amount;
-
-                if (rotationY >= 360.0f) rotationY = 0.0f;
-            }
-            if (input.IsKeyDown(Keys.Left))
-            {
-                rotationY -= amount;
-
-                if (rotationY <= 0.0f) rotationY = 360.0f;
+                return;
             }
 
-            if (input.IsKeyDown(Keys.Up))
+            if (input.IsKeyDown(Keys.Escape))
             {
-                rotationX += amount;
-
-                if (rotationX >= 360.0f) rotationX = 0.0f;
+                Close();
             }
-            if (input.IsKeyDown(Keys.Down))
+
+            if (input.IsKeyPressed(Keys.F))
             {
-                rotationX -= amount;
-
-                if (rotationX <= 0.0f) rotationX = 360.0f;
+                this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
+                this.ModelRotation = new Vector2(0.0f, 0.0f);
             }
+
+
+            bool rotate = mouse[MouseButton.Middle] && input.IsKeyDown(Keys.LeftControl);
+            bool pan = mouse[MouseButton.Middle] && !input.IsKeyDown(Keys.LeftControl);
+
+
+            
+
+            if (pan)
+            {
+                if (!this.MiddleMouse)
+                {
+                    this.MiddleMouse = true;
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+                }
+                else
+                {
+                    float deltaX = mouse.X - _lastPos.X;
+                    float deltaY = mouse.Y - _lastPos.Y;
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+
+                    float h = 2.0f / WindowHeight;
+                    float w = 2.0f / WindowWidth;
+
+                    this.camera.Position += deltaY * (this.camera.Up * h);
+                    this.camera.Position -= deltaX * (Vector3.Normalize(Vector3.Cross(this.camera.Front, this.camera.Up)) * w);
+                }
+
+            }
+            else
+            {
+                this.MiddleMouse = false;
+            }
+
+
+            if (rotate)
+            {
+                if (_firstMove) // this bool variable is initially set to true
+                {
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+                    _firstMove = false;
+                }
+                else
+                {
+                    var deltaX = mouse.X - _lastPos.X;
+                    var deltaY = mouse.Y - _lastPos.Y;
+                    _lastPos = new Vector2(mouse.X, mouse.Y);
+
+                    
+                    this.ModelRotation.X += deltaY * RotationSensitivity; 
+                    this.ModelRotation.Y += deltaX * RotationSensitivity;
+                }
+            }
+            else
+            {
+                _firstMove = true;
+            }
+        }
+
+
+        
+
+        // In the mouse wheel function we manage all the zooming of the camera
+        // this is simply done by changing the FOV of the camera
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            KeyboardState input = KeyboardState;
+
+            if (input.IsKeyDown(Keys.LeftShift))
+            {
+                camera.Fov -= e.Offset.Y * 5;
+            }
+            else
+            {
+                this.camera.Position += (e.Offset.Y * this.camera.Front);
+            }
+            
+            
+            // Console.WriteLine("{0}    {1}", e.Offset.X, e.Offset.Y);
+            base.OnMouseWheel(e);
         }
 
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
 
-            GL.Viewport(0, 0, e.Width, e.Height);
+            this.WindowWidth = e.Width;
+            this.WindowHeight = e.Height;
+
+            GL.Viewport(0, 0, this.WindowWidth, this.WindowHeight);
         }
 
         protected override void OnUnload()

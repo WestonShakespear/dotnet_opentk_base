@@ -7,7 +7,7 @@ namespace Program
     {
         public int Handle;
 
-        private readonly Dictionary<string, int> _uniformLocations;
+        private readonly Dictionary<string, int>? _uniformLocations;
 
         public Shader(string vertex_path, string fragment_path)
         {
@@ -93,8 +93,14 @@ namespace Program
 
         public void SetMatrix4(string name, Matrix4 data)
         {
-            GL.UseProgram(Handle);
-            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+            if (_uniformLocations != null)
+            {
+                if (_uniformLocations.ContainsKey(name))
+                {
+                    GL.UseProgram(Handle);
+                GL.UniformMatrix4(_uniformLocations[name], true, ref data);
+                }
+            }
         }
 
 

@@ -86,7 +86,7 @@ namespace Program
             
 
 
-            GL.Uniform4(vertexColorLocation, 0.992f, 0.964f, 0.89f, 1.0f);
+            GL.Uniform4(vertexColorLocation, 0.992f, 0.974f, 0.89f, 1.0f);
 
             GL.BindVertexArray(VertexArrayObject);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);

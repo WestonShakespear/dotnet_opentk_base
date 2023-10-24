@@ -1,10 +1,13 @@
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace Program
 {
     public class Shader
     {
         public int Handle;
+
+        private readonly Dictionary<string, int> _uniformLocations;
 
         public Shader(string vertex_path, string fragment_path)
         {
@@ -47,6 +50,26 @@ namespace Program
             GL.DetachShader(Handle, fragmentShader);
             GL.DeleteShader(vertexShader);
             GL.DeleteShader(fragmentShader);
+
+            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+
+            // Next, allocate the dictionary to hold the locations.
+            _uniformLocations = new Dictionary<string, int>();
+
+            // Loop over all the uniforms,
+            for (var i = 0; i < numberOfUniforms; i++)
+            {
+                // get the name of this uniform,
+                var key = GL.GetActiveUniform(Handle, i, out _, out _);
+
+                // get the location,
+                var location = GL.GetUniformLocation(Handle, key);
+
+                // and then add it to the dictionary.
+                _uniformLocations.Add(key, location);
+            }
+
+
         }
 
         public int compile(int shaderObject)
@@ -66,6 +89,12 @@ namespace Program
         public void Use()
         {
             GL.UseProgram(Handle);
+        }
+
+        public void SetMatrix4(string name, Matrix4 data)
+        {
+            GL.UseProgram(Handle);
+            GL.UniformMatrix4(_uniformLocations[name], true, ref data);
         }
 
 

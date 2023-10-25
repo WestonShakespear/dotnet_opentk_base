@@ -11,19 +11,6 @@ namespace Program
 {
     public class Game : GameWindow
     {
-
-        static Vector3 WorldUp = Vector3.UnitY;
-
-        // static Vector3 CameraPosition = new Vector3(0.0f, 0.0f, 3.0f);
-        // static Vector3 CameraTarget = Vector3.Zero;
-        // static Vector3 CameraDirection = Vector3.Normalize(CameraDirection - CameraTarget);
-        // static Vector3 CameraRight = Vector3.Normalize(Vector3.Cross(WorldUp, CameraDirection));
-        // static Vector3 CameraUp = Vector3.Cross(CameraDirection, CameraRight);
-
-        // static Vector3 PlayerPosition = new Vector3(0.0f, 0.0f, 3.0f);
-        // static Vector3 PlayerFront = new Vector3(0.0f, 0.0f, -1.0f);
-        // static Vector3 PlayerUp = new Vector3(0.0f, 1.0f, 0.0f);
-
         Camera camera;
 
         const float PLAYER_SPEED = 0.5f;
@@ -39,15 +26,18 @@ namespace Program
 
         const int FPS = 1000;
 
-        int VertexDataBufferObject;
-        int ElementBufferObject;
-        int VertexArrayObject;
-
-        int VertexDataBufferObject2;
-        int ElementBufferObject2;
-        int VertexArrayObject2;
+        Square sq1;
         
         Shader shader;
+
+        private Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
+        private bool _firstMove = true;
+        private Vector2 _lastPos;
+        const float cameraSpeed = 1.5f;
+        
+        float RotationSensitivity = 0.6f;
+
+        bool MiddleMouse = false;
 
 
         public Game(int width, int height, string title) : base(
@@ -62,6 +52,13 @@ namespace Program
             this.WindowHeight = height;
             this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
 
+
+            float[] square_size = { -1.0f, 1.0f, 2.0f, 2.0f };
+
+            sq1 = new Square(square_size);
+
+            sq1.SetColor(1.0f, 0.0f, 0.0f, 1.0f);
+
         }
 
         
@@ -73,19 +70,14 @@ namespace Program
             // Set the background color
             GL.ClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 
-            float[] square_size = { -0.5f, 0.5f, 1.0f, 1.0f };
-            float[] square_size2 = { -1.0f, 1.0f, 0.5f, 0.5f };
-
             // Load the shader
-            MakeSquare(square_size, ref VertexArrayObject, ref VertexDataBufferObject, ref ElementBufferObject);
-            MakeSquare(square_size2, ref VertexArrayObject2, ref VertexDataBufferObject2, ref ElementBufferObject2);
-            
+            Square.Draw(sq1);
            
         }
 
 
 
-        private Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
+        
         
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -98,7 +90,7 @@ namespace Program
             shader.Use();
 
             int vertexColorLocation = GL.GetUniformLocation(shader.Handle, "ourColor");
-            GL.Uniform4(vertexColorLocation, 0.992f, 0.974f, 0.89f, 1.0f);
+            GL.Uniform4(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
 
             float x_rotation = MathHelper.DegreesToRadians(this.ModelRotation.X);
@@ -113,8 +105,7 @@ namespace Program
             shader.SetMatrix4("projection", this.camera.GetProjectionMatrix());
 
 
-            DrawSquare(ref VertexArrayObject);
-            DrawSquare(ref VertexArrayObject2);
+            Square.Render(sq1, vertexColorLocation);
 
             // GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
 
@@ -123,13 +114,7 @@ namespace Program
             SwapBuffers();
         }
 
-        private bool _firstMove = true;
-        private Vector2 _lastPos;
-        const float cameraSpeed = 1.5f;
         
-        float RotationSensitivity = 0.6f;
-
-        bool MiddleMouse = false;
 
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -153,6 +138,11 @@ namespace Program
             {
                 this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
                 this.ModelRotation = new Vector2(0.0f, 0.0f);
+            }
+
+            if (input.IsKeyPressed(Keys.S))
+            {
+                Square.Subdivide(sq1);
             }
 
 
@@ -251,55 +241,6 @@ namespace Program
             base.OnUnload();
 
             shader.Dispose();
-            // shader2.Dispose();
-        }
-
-        
-
-        public void MakeSquare(float[] square_size, ref int vertex_array_object, ref int vertex_buffer_object, ref int element_buffer_object)
-        {
-            // square_size( origin_x origin_y x_len y_len
-
-            float[] vert =
-            {
-                square_size[0] + square_size[2], square_size[1], 0.0f,  // top right
-                square_size[0] + square_size[2], square_size[1] - square_size[3], 0.0f,  // bottom right
-                square_size[0], square_size[1] - square_size[3], 0.0f,  // bottom left
-                square_size[0], square_size[1], 0.0f   // top left
-            };
-
-            uint[] indices =
-            {
-                0, 1, 3,
-                1, 2, 3
-            };
-
-            vertex_array_object = GL.GenVertexArray();
-            GL.BindVertexArray(vertex_array_object);
-
-            // Create and bind buffer for vertex data
-            vertex_buffer_object = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertex_buffer_object);
-
-            // Now that it's bound, load with data
-            GL.BufferData(
-                BufferTarget.ArrayBuffer,
-                vert.Length * sizeof(float),
-                vert,
-                BufferUsageHint.StaticDraw);
-
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-
-            element_buffer_object = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, element_buffer_object);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-        }
-
-        public void DrawSquare(ref int vertex_array_object)
-        {
-            GL.BindVertexArray(vertex_array_object);
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
         }
     }
 

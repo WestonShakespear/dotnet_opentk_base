@@ -7,13 +7,14 @@ using OpenTK.Input;
 using OpenTK;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-namespace Program
-{
-    public class Game : GameWindow
-    {
-        Camera camera;
+using WS_2D_PIXEL;
 
+namespace WS_ENGINE_BASE
+{
+    public class Engine
+    {
         const float PLAYER_SPEED = 0.5f;
+        const float cameraSpeed = 1.5f;
 
         int WindowWidth;
         int WindowHeight;
@@ -24,72 +25,44 @@ namespace Program
             1, 2, 3
         };
 
-        const int FPS = 1000;
+        WS_2D_PIXEL.Square sq1;
 
-        Square sq1;
-        
+        Camera camera;
         Shader shader;
 
         private Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
         private bool _firstMove = true;
         private Vector2 _lastPos;
-        const float cameraSpeed = 1.5f;
+        
         
         float RotationSensitivity = 0.6f;
+        float StartZ = 2;
 
         bool MiddleMouse = false;
 
-
-        public Game(int width, int height, string title) : base(
-            GameWindowSettings.Default,
-            new NativeWindowSettings() { Size = (width, height), Title = title }
-            )
+        
+        public Engine(int _WindowWidth, int _WindowHeight, Vector2 Size)
         {
-            shader = new Shader("shader.vert", "shader.frag");
-
-            this.UpdateFrequency = FPS;
-            this.WindowWidth = width;
-            this.WindowHeight = height;
-            this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
-
+            this.shader = new Shader("shader.vert", "shader.frag");
+            this.camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
+            this.WindowWidth = _WindowWidth;
+            this.WindowHeight = _WindowHeight;
 
             float[] square_size = { -1.0f, 1.0f, 2.0f, 2.0f };
 
-            sq1 = new Square(square_size);
+            this.sq1 = new WS_2D_PIXEL.Square(square_size);
 
-            sq1.SetColor(1.0f, 0.0f, 0.0f, 1.0f);
-
+            this.sq1.SetColor(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
-        
-
-        protected override void OnLoad()
+        public void RenderFrame(FrameEventArgs e)
         {
-            base.OnLoad();
-
-            // Set the background color
-            GL.ClearColor(0.0f, 0.0f, 0.1f, 1.0f);
-
-            // Load the shader
-            Square.Draw(sq1);
-           
-        }
-
-
-
-        
-        
-
-        protected override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
-
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
  
-            shader.Use();
+            this.shader.Use();
 
-            int vertexColorLocation = GL.GetUniformLocation(shader.Handle, "ourColor");
+            int vertexColorLocation = GL.GetUniformLocation(this.shader.Handle, "ourColor");
             GL.Uniform4(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
 
@@ -105,24 +78,11 @@ namespace Program
             shader.SetMatrix4("projection", this.camera.GetProjectionMatrix());
 
 
-            Square.Render(sq1, vertexColorLocation);
-
-            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
-
-
-            // Last
-            SwapBuffers();
+            Square.Render(this.sq1, vertexColorLocation);
         }
 
-        
-
-
-        protected override void OnUpdateFrame(FrameEventArgs e)
+        public void UpdateFrame(FrameEventArgs e, KeyboardState input, MouseState mouse, bool IsFocused, Vector2 Size, ref int status)
         {
-            base.OnUpdateFrame(e);
-
-            KeyboardState input = KeyboardState;
-            MouseState mouse = MouseState;
 
             if (!IsFocused) // Check to see if the window is focused
             {
@@ -131,26 +91,25 @@ namespace Program
 
             if (input.IsKeyDown(Keys.Escape))
             {
-                Close();
+                status = -1;
+                return;
             }
 
             if (input.IsKeyPressed(Keys.F))
             {
-                this.camera = new Camera(Vector3.UnitZ * 1, Size.X / (float)Size.Y);
+                this.camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
                 this.ModelRotation = new Vector2(0.0f, 0.0f);
             }
 
             if (input.IsKeyPressed(Keys.S))
             {
                 Square.Subdivide(sq1);
+                Console.WriteLine("There are {0} cubes.", Square.CubeCounter);
             }
 
 
             bool rotate = mouse[MouseButton.Middle] && input.IsKeyDown(Keys.LeftControl);
             bool pan = mouse[MouseButton.Middle] && !input.IsKeyDown(Keys.LeftControl);
-
-
-            
 
             if (pan)
             {
@@ -201,48 +160,43 @@ namespace Program
             {
                 _firstMove = true;
             }
+
+            return;
         }
 
-
-        
-
-        // In the mouse wheel function we manage all the zooming of the camera
-        // this is simply done by changing the FOV of the camera
-        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        public void MouseWheel(MouseWheelEventArgs e, KeyboardState input)
         {
-            KeyboardState input = KeyboardState;
-
-            if (input.IsKeyDown(Keys.LeftShift))
+            if (!input.IsKeyDown(Keys.LeftShift))
             {
-                camera.Fov -= e.Offset.Y * 5;
+                camera.Fov += e.Offset.Y * 5;
             }
             else
             {
                 this.camera.Position += (e.Offset.Y * this.camera.Front);
             }
-            
-            
-            // Console.WriteLine("{0}    {1}", e.Offset.X, e.Offset.Y);
-            base.OnMouseWheel(e);
         }
 
-        protected override void OnResize(ResizeEventArgs e)
+        public void Resize(ResizeEventArgs e)
         {
-            base.OnResize(e);
-
             this.WindowWidth = e.Width;
             this.WindowHeight = e.Height;
 
             GL.Viewport(0, 0, this.WindowWidth, this.WindowHeight);
         }
 
-        protected override void OnUnload()
+        public void Load()
         {
-            base.OnUnload();
+            // Set the background color
+            GL.ClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 
-            shader.Dispose();
+            // Load the shader
+            Square.Draw(this.sq1);
         }
-    }
 
-    
+        public void Unload()
+        {
+            this.shader.Dispose();
+        }
+
+    }
 }

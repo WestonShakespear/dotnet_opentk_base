@@ -1,25 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {}
+    "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {
+    "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj",
+        "projectUniqueName": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj",
         "projectName": "WS_2D_PIXEL",
-        "projectPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj",
-        "packagesPath": "C:\\Users\\wes\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\obj\\",
+        "projectPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj",
+        "packagesPath": "C:\\Users\\Initec\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Software\\VS\\SDK\\NuGetPackages"
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\wes\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Initec\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -65,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }

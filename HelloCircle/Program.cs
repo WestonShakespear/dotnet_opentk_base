@@ -35,7 +35,7 @@ namespace HelloTriangle
                 Title = title
             })
         {
-
+            this.CenterWindow();
         }
 
 
@@ -75,6 +75,11 @@ namespace HelloTriangle
             {
                 Close();
                 Environment.Exit(0);
+            }
+
+            if (key.IsKeyPressed(Keys.S))
+            {
+                Logic.Logic.Subdivide();
             }
         }
 

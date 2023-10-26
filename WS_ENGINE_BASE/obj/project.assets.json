@@ -433,25 +433,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\wes\\.nuget\\packages\\": {},
-    "D:\\Software\\VS\\SDK\\NuGetPackages": {}
+    "C:\\Users\\Initec\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_ENGINE_BASE\\WS_ENGINE_BASE.csproj",
+      "projectUniqueName": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_ENGINE_BASE\\WS_ENGINE_BASE.csproj",
       "projectName": "WS_ENGINE_BASE",
-      "projectPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_ENGINE_BASE\\WS_ENGINE_BASE.csproj",
-      "packagesPath": "C:\\Users\\wes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_ENGINE_BASE\\obj\\",
+      "projectPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_ENGINE_BASE\\WS_ENGINE_BASE.csproj",
+      "packagesPath": "C:\\Users\\Initec\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_ENGINE_BASE\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Software\\VS\\SDK\\NuGetPackages"
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\wes\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Initec\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
@@ -464,8 +464,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {
-              "projectPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj"
+            "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj": {
+              "projectPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\WS_2D_PIXEL\\WS_2D_PIXEL.csproj"
             }
           }
         }
@@ -501,7 +501,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }

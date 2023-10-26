@@ -1,8 +1,7 @@
-using OpenTK.Graphics;
+using System.Numerics;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+
+using Drawing;
 
 namespace Logic
 {
@@ -10,130 +9,103 @@ namespace Logic
 
     public class Logic
     {
-        public static int VertexBuffer;
-        public static int VertexArray;
+        public static int VertexArrayCircle1;
+        public static int VertexArrayCircle2;
         public static int ShaderHandle;
 
-        public static int ElementBuffer;
-
-        public static int DataLength;
+        public static int DataLengthCircle1;
+        public static int DataLengthCircle2;
 
         public static int Segments = 8;
 
         public static bool Filled = false;
 
-        public static float CircleX = 0.0f;
-        public static float CircleY = 0.0f;
-        public static float CircleRadius = 0.5f;
+        // x y radius
+        public static Vector3 CircleSize = new Vector3(-0.4f, 0.2f, 0.125f);
+        public static Vector3 CircleSize2 = new Vector3(0.7f, 0.7f, 0.125f);
 
-        private static void CreateCircle(float radius, int division, out float[] vertices, out uint[] indices)
-        {
-            double angle = 2 * Math.PI / division;
+        public static Vector3 SquareSize = new Vector3(0.0f, 0.0f, 1.0f);
 
-            vertices = new float[12 + (3 * division)];
-            vertices[0] = CircleX;
-            vertices[1] = CircleY;
-            vertices[2] = 0.0f;
+        public static bool RenderClearScreen = true;
 
-            indices = new uint[3 + (3 * division)];
-            // indices[indices.Length - 1] = (uint)(division + 2);
-            // indices[indices.Length - 2] = (uint)(division + 1);
-            // indices[indices.Length - 3] = 0;
+        public static Circle circleA = new Circle();
+        public static Circle circleB = new Circle();
 
-            
+        public static Square square1 = new Square();
 
-            for (int i = 0; i <= division; i++)
-            {
-                vertices[3 * (i + 1)] =     CircleX + (radius * (float)Math.Cos(angle * i));//x);
-                vertices[3 * (i + 1) + 1] = CircleY + (radius * (float)Math.Sin(angle * i)); //y;
-                vertices[3 * (i + 1) + 2] = 0.0f;                       //z;
+        public static bool collideC = false;
+        public static bool collideS = false;
 
-                indices[3 * i] =      0;
-                indices[3 * i + 1] =  (uint)(i + 1);
-                indices[3 * i + 2] =  (uint)(i + 2);
+        
 
-            }
-            
-
-
-            // for (int i = 0; i < indices.Length; i++)
-            // {
-            //     Console.Write("{0}    ,", indices[i]);
-
-            //     if ((i+1) % 3 == 0)
-            //     {
-            //         Console.WriteLine();
-            //     }
-            // }
-       
-
-            
-        }
+        
 
         public static void Setup()
         {
             // Set the clear color for refreshing
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            CreateCircle(CircleRadius, Segments, out float[] vertices, out uint[] indices);
-            DataLength = indices.Length;
+            circleA.Create(CircleSize.Z, new Vector2(CircleSize.X, CircleSize.Y),  Segments);
+            circleA.Draw();
 
+            circleB.Create(CircleSize2.Z, new Vector2(CircleSize2.X, CircleSize2.Y),  16);
+            circleB.Draw();
+
+            square1.Create(SquareSize.Z, new Vector2(SquareSize.X, SquareSize.Y));
+            Square.Draw(square1);
+
+            collideC = Circle.Collide(circleA, circleB);
+            collideS = Circle.Collide(circleA, square1);    
+        }
+
+        public static void Subdivide()
+        {
+            if (!Circle.Collide(circleA, square1))
+            {
+                Console.WriteLine("The circle is not intersecting the square");
+                return;
+            }
+            Console.WriteLine("The circle is intersecting the square...subdividing");
             
-
-
-            //-----------------------CREATE THE VERTICES----------------------//
-            // Create the array buffer to fill with vertices
-            VertexBuffer = GL.GenBuffer();
-
-            VertexArray = GL.GenVertexArray();
-            GL.BindVertexArray(VertexArray);
-
-            // Bind the buffer with the target being array
-            // Then the buffer can be filled
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBuffer);
-
-            // Draw the vertices
-            int data_bytes = vertices.Length * sizeof(float);
-
-            GL.BufferData
-            (
-                BufferTarget.ArrayBuffer,
-                data_bytes,
-                vertices,
-                BufferUsageHint.StaticDraw
-            );
-
-
-            ElementBuffer = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBuffer);
+        }
 
         
 
-            GL.BufferData
-            (
-                BufferTarget.ElementArrayBuffer,
-                indices.Length * sizeof(float),
-                indices,
-                BufferUsageHint.StaticDraw
-            );
+        public static void Render()
+        {
+            // Clear the screen
+            if (RenderClearScreen)
+            {
+                GL.Clear(ClearBufferMask.ColorBufferBit);
+            }
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3*sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
+            // Set wireframe
+            if (!Filled)
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            }
+            else
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            }
+            // Use the shader
+            GL.UseProgram(ShaderHandle);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            // GL.DeleteBuffer(this.VertexBuffer);
+            if (circleA != null && circleB != null && square1 != null)
+            {
+                circleA.Render();
+                circleB.Render();
 
-
+                Square.SubdivideFromCircle(circleA, square1, 7);
+                Square.Draw(square1);
+                Square.Render(square1);
+            }
             
 
-            
-
-            //-----------------------LOAD THE SHADER----------------------//
-            // Console.WriteLine("LOAD THE SHADER");
-
-            // Create the shaders
-            
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
         }
+
+
 
         public static void SetupShader()
         {
@@ -186,33 +158,6 @@ namespace Logic
             GL.DetachShader(ShaderHandle, FragShader);
             GL.DeleteShader(VertShader);
             GL.DeleteShader(FragShader);
-        }
-
-        public static void Render()
-        {
-            // Clear the screen
-            // GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            // Set wireframe
-            if (!Filled)
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            }
-            else
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            }
-            // Use the shader
-            GL.UseProgram(ShaderHandle);
-
-            // Bind the vertex data
-            GL.BindVertexArray(VertexArray);
-            
-            // Draw the triangle
-            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
-            GL.DrawElements(PrimitiveType.Triangles, DataLength - 3, DrawElementsType.UnsignedInt, 0);
-
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
         }
 
         static string vert = 

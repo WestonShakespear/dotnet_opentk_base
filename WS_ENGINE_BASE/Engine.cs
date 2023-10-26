@@ -13,8 +13,8 @@ namespace WS_ENGINE_BASE
 {
     public class Engine
     {
-        const float PLAYER_SPEED = 0.5f;
-        const float cameraSpeed = 1.5f;
+        public static float PLAYER_SPEED = 0.5f;
+        public static float cameraSpeed = 1.5f;
 
         int WindowWidth;
         int WindowHeight;
@@ -25,14 +25,14 @@ namespace WS_ENGINE_BASE
             1, 2, 3
         };
 
-        WS_2D_PIXEL.Square sq1;
+        public static WS_2D_PIXEL.Square sq1;
 
-        Camera camera;
+        public static Camera? camera;
         Shader shader;
 
-        private Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
+        public static Vector2 ModelRotation = new Vector2(0.0f, 0.0f);
         private bool _firstMove = true;
-        private Vector2 _lastPos;
+        public static Vector2 _lastPos;
         
         
         float RotationSensitivity = 0.6f;
@@ -41,44 +41,48 @@ namespace WS_ENGINE_BASE
         bool MiddleMouse = false;
 
         
-        public Engine(int _WindowWidth, int _WindowHeight, Vector2 Size)
+        public Engine(int _WindowWidth, int _WindowHeight, Vector2 Size, string _shader_vert, string _shader_frag)
         {
-            this.shader = new Shader("shader.vert", "shader.frag");
-            this.camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
+            this.shader = new Shader(_shader_vert, _shader_frag);
             this.WindowWidth = _WindowWidth;
             this.WindowHeight = _WindowHeight;
 
+            camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
+
             float[] square_size = { -1.0f, 1.0f, 2.0f, 2.0f };
 
-            this.sq1 = new WS_2D_PIXEL.Square(square_size);
+            sq1 = new WS_2D_PIXEL.Square(square_size);
 
-            this.sq1.SetColor(1.0f, 0.0f, 0.0f, 1.0f);
+            sq1.SetColor(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         public void RenderFrame(FrameEventArgs e)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            if (camera != null)
+            {
 
- 
-            this.shader.Use();
+                GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            int vertexColorLocation = GL.GetUniformLocation(this.shader.Handle, "ourColor");
-            GL.Uniform4(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+                this.shader.Use();
 
-
-            float x_rotation = MathHelper.DegreesToRadians(this.ModelRotation.X);
-            float y_rotation = MathHelper.DegreesToRadians(this.ModelRotation.Y);
-
-            Matrix4 model = Matrix4.CreateRotationX(x_rotation);
-            model *= Matrix4.CreateRotationY(y_rotation);
+                int vertexColorLocation = GL.GetUniformLocation(this.shader.Handle, "ourColor");
+                GL.Uniform4(vertexColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
 
 
-            shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", this.camera.GetViewMatrix());
-            shader.SetMatrix4("projection", this.camera.GetProjectionMatrix());
+                float x_rotation = MathHelper.DegreesToRadians(ModelRotation.X);
+                float y_rotation = MathHelper.DegreesToRadians(ModelRotation.Y);
+
+                Matrix4 model = Matrix4.CreateRotationX(x_rotation);
+                model *= Matrix4.CreateRotationY(y_rotation);
 
 
-            Square.Render(this.sq1, vertexColorLocation);
+                shader.SetMatrix4("model", model);
+                shader.SetMatrix4("view", camera.GetViewMatrix());
+                shader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+
+                Square.Render(sq1, vertexColorLocation);
+            }
         }
 
         public void UpdateFrame(FrameEventArgs e, KeyboardState input, MouseState mouse, bool IsFocused, Vector2 Size, ref int status)
@@ -97,8 +101,8 @@ namespace WS_ENGINE_BASE
 
             if (input.IsKeyPressed(Keys.F))
             {
-                this.camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
-                this.ModelRotation = new Vector2(0.0f, 0.0f);
+                camera = new Camera(Vector3.UnitZ * StartZ, Size.X / (float)Size.Y);
+                ModelRotation = new Vector2(0.0f, 0.0f);
             }
 
             if (input.IsKeyPressed(Keys.S))
@@ -111,7 +115,7 @@ namespace WS_ENGINE_BASE
             bool rotate = mouse[MouseButton.Middle] && input.IsKeyDown(Keys.LeftControl);
             bool pan = mouse[MouseButton.Middle] && !input.IsKeyDown(Keys.LeftControl);
 
-            if (pan)
+            if (pan && camera != null)
             {
                 if (!this.MiddleMouse)
                 {
@@ -127,8 +131,8 @@ namespace WS_ENGINE_BASE
                     float h = 2.0f / WindowHeight;
                     float w = 2.0f / WindowWidth;
 
-                    this.camera.Position += deltaY * (this.camera.Up * h);
-                    this.camera.Position -= deltaX * (Vector3.Normalize(Vector3.Cross(this.camera.Front, this.camera.Up)) * w);
+                    camera.Position += deltaY * (camera.Up * h);
+                    camera.Position -= deltaX * (Vector3.Normalize(Vector3.Cross(camera.Front, camera.Up)) * w);
                 }
 
             }
@@ -152,8 +156,8 @@ namespace WS_ENGINE_BASE
                     _lastPos = new Vector2(mouse.X, mouse.Y);
 
                     
-                    this.ModelRotation.X += deltaY * RotationSensitivity; 
-                    this.ModelRotation.Y += deltaX * RotationSensitivity;
+                    ModelRotation.X += deltaY * RotationSensitivity; 
+                    ModelRotation.Y += deltaX * RotationSensitivity;
                 }
             }
             else
@@ -166,13 +170,17 @@ namespace WS_ENGINE_BASE
 
         public void MouseWheel(MouseWheelEventArgs e, KeyboardState input)
         {
-            if (!input.IsKeyDown(Keys.LeftShift))
+            if (camera != null)
             {
-                camera.Fov += e.Offset.Y * 5;
-            }
-            else
-            {
-                this.camera.Position += (e.Offset.Y * this.camera.Front);
+
+                if (!input.IsKeyDown(Keys.LeftShift))
+                {
+                    camera.Fov += e.Offset.Y * 5;
+                }
+                else
+                {
+                    camera.Position += (e.Offset.Y * camera.Front);
+                }
             }
         }
 
@@ -190,7 +198,7 @@ namespace WS_ENGINE_BASE
             GL.ClearColor(0.0f, 0.0f, 0.1f, 1.0f);
 
             // Load the shader
-            Square.Draw(this.sq1);
+            Square.Draw(sq1);
         }
 
         public void Unload()

@@ -7,7 +7,6 @@ using OpenTK.Input;
 using OpenTK;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
-using WS_2D_PIXEL;
 
 namespace WS_ENGINE_BASE
 {
@@ -21,7 +20,10 @@ namespace WS_ENGINE_BASE
             new NativeWindowSettings() { Size = (width, height), Title = title }
             )
         {
-            engine = new Engine(width, height, Size);
+            string frag = @"C:\Users\wes\github-repos\dotnet_opentk_base\WS_ENGINE_BASE\shader.frag";
+            string vert = @"C:\Users\wes\github-repos\dotnet_opentk_base\WS_ENGINE_BASE\shader.vert";
+
+            engine = new Engine(width, height, Size, vert, frag);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

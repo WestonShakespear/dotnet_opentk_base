@@ -103,9 +103,12 @@ namespace WS_2D_PIXEL
         {
             if (_root.Self)
             {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
                 GL.Uniform4(_vertexColorLocation, _root.R, _root.G, _root.B, _root.A);
                 GL.BindVertexArray(_root.VertexArrayObject);
                 GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, 0);
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            
             }
             else
             {

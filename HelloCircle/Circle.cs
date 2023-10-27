@@ -128,5 +128,35 @@ namespace Drawing
 
             return in_x && in_y;
         }
+
+        public static bool Collide(Square s, Circle c)
+        {
+            float offset = s.Side / 2.0f;
+
+            Vector2[] positions = {
+                new Vector2(s.Center.X - offset, s.Center.Y - offset),
+                new Vector2(s.Center.X + offset, s.Center.Y - offset),
+                new Vector2(s.Center.X - offset, s.Center.Y + offset),
+                new Vector2(s.Center.X + offset, s.Center.Y + offset)
+            };
+
+            for (int i = 0; i < 4; i++)
+            {
+                float x_distance = positions[i].X - c.Center.X;
+                float y_distance = positions[i].Y - c.Center.Y;
+
+                float distance = (float)Math.Sqrt( (x_distance * x_distance) + (y_distance * y_distance));
+
+                if (distance < c.Radius)
+                {
+                    return true;
+                }
+            }
+
+
+            
+
+            return false;
+        }
     }
 }

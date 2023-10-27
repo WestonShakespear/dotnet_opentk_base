@@ -16,15 +16,15 @@ namespace Logic
         public static int DataLengthCircle1;
         public static int DataLengthCircle2;
 
-        public static int Segments = 8;
+        public static int Segments = 32;
 
         public static bool Filled = false;
 
         // x y radius
-        public static Vector3 CircleSize = new Vector3(-0.4f, 0.2f, 0.125f);
-        public static Vector3 CircleSize2 = new Vector3(0.7f, 0.7f, 0.125f);
+        public static Vector3 CircleSize = new Vector3(-0.9f, 0.0f, 0.125f);
+        public static Vector3 CircleSize2 = new Vector3(0.8f, 0.8f, 0.125f);
 
-        public static Vector3 SquareSize = new Vector3(0.0f, 0.0f, 1.0f);
+        public static Vector3 SquareSize = new Vector3(0.0f, 0.0f, 1.5f);
 
         public static bool RenderClearScreen = true;
 
@@ -48,11 +48,11 @@ namespace Logic
             circleA.Create(CircleSize.Z, new Vector2(CircleSize.X, CircleSize.Y),  Segments);
             circleA.Draw();
 
-            circleB.Create(CircleSize2.Z, new Vector2(CircleSize2.X, CircleSize2.Y),  16);
+            circleB.Create(CircleSize2.Z, new Vector2(CircleSize2.X, CircleSize2.Y),  32);
             circleB.Draw();
 
-            square1.Create(SquareSize.Z, new Vector2(SquareSize.X, SquareSize.Y));
-            Square.Draw(square1);
+            
+            // Square.Draw(square1);
 
             collideC = Circle.Collide(circleA, circleB);
             collideS = Circle.Collide(circleA, square1);    
@@ -91,18 +91,19 @@ namespace Logic
             // Use the shader
             GL.UseProgram(ShaderHandle);
 
-            if (circleA != null && circleB != null && square1 != null)
-            {
+            // if (circleA != null && circleB != null && square1 != null)
+            // {
                 circleA.Render();
-                circleB.Render();
+                // circleB.Render();
 
-                Square.SubdivideFromCircle(circleA, square1, 7);
+                Square.Cut(circleA, square1, 7);
                 Square.Draw(square1);
                 Square.Render(square1);
-            }
+            // }
             
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            // Console.WriteLine("Render");
         }
 
 
@@ -158,6 +159,8 @@ namespace Logic
             GL.DetachShader(ShaderHandle, FragShader);
             GL.DeleteShader(VertShader);
             GL.DeleteShader(FragShader);
+
+            square1.Create(SquareSize.Z, new Vector2(SquareSize.X, SquareSize.Y));
         }
 
         static string vert = 

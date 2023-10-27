@@ -150,37 +150,96 @@ namespace Drawing
             
         }
 
-        public static void SubdivideFromCircle(Circle circle, Square square, int max_level)
+        public static void Cut(Circle circle, Square square, int max_level)
         {
-            
+            // Console.WriteLine("Cut the circle");
+            SubdivideFromCircle(circle, square, max_level);
+
+            RemoveSquares(circle, square);
+        }
+
+        static int removedSquares = 0;
+        static int level = 0;
+
+        public static void RemoveSquares(Circle circle, Square square)
+        {
+            // Console.WriteLine("Removed Squares = {0}", removedSquares);
+            // Console.WriteLine("We are {0} level deep", level);
+            // Console.WriteLine();
+
             if (IsRoot(square))
             {
-                bool collision = Circle.Collide(circle, square);
+                // Console.WriteLine("This is a base");
+                // Console.WriteLine();
 
-                // Console.WriteLine("This is the root square");
-
-                if (collision)
+                if (Circle.Collide(square, circle))
                 {
-                    if (max_level == 0)
-                    {
-                        square.Off = true;
-                        return;
-                    }
-
-                    // Console.WriteLine("Circle is inside, subdividing this root");
-                    Subdivide(square);
+                    square.Off = true;
+                    // Console.WriteLine("R{0} X:{1} Y:Y{2}", removedSquares, square.Center.X, square.Center.Y);
+                    removedSquares++;
                 }
-                
-               
+                return;
             }
             else
             {
+                // Console.WriteLine("This is not the base");
+                // Console.WriteLine();
+                level++;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (square.Subs[i] != false)
+                    {
+                        RemoveSquares(circle, square.SubSquare[i]);
+                    }
+                    
+                }
+            }
+        }
+
+        public static void SubdivideFromCircle(Circle circle, Square square, int max_level)
+        {
+            if (!Circle.Collide(circle, square)) return;
+            // Base case
+            if (max_level == 0)
+            {
+                return;
+            }
+            else
+            {
+                
                 max_level--;
+
+                Subdivide(square);
                 for (int i = 0; i < 4; i++)
                 {
                     SubdivideFromCircle(circle, square.SubSquare[i], max_level);
                 }
+
             }
+            
+            // if (IsRoot(square))
+            // {
+            //     Console.WriteLine("This is the root square");
+            //     bool collision = Circle.Collide(circle, square);
+            //     max_level--;
+
+                // Console.WriteLine("This is the root square");
+
+                // if (collision)
+                // {
+                    
+
+                //     // Console.WriteLine("Circle is inside, subdividing this root");
+                    
+                // }
+                
+                
+               
+            // }
+            // Console.WriteLine("Max level is: {0}", max_level);
+            
+            
         }
 
         // public static bool Collide(Circle a, Circle b)

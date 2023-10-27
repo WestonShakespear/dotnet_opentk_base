@@ -1,25 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj": {}
+    "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj": {
+    "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
+        "projectUniqueName": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
         "projectName": "HelloCircle",
-        "projectPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
-        "packagesPath": "C:\\Users\\Initec\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Initec\\Documents\\Personal\\github_personal\\dotnet_opentk_base\\HelloCircle\\obj\\",
+        "projectPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
+        "packagesPath": "C:\\Users\\wes\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
+          "D:\\Software\\VS\\SDK\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Initec\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\wes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -65,7 +65,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

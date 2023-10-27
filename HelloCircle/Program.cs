@@ -63,6 +63,9 @@ namespace HelloTriangle
 
             // Do this last to display the changes
             Context.SwapBuffers();
+            // while(1==1)
+            // {
+            // }
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -111,7 +114,7 @@ namespace HelloTriangle
     {
         public static void Main(string[] args)
         {
-            using (Game game = new Game(640, 640, "HelloTriangle"))
+            using (Game game = new Game(1280, 1280, "HelloTriangle"))
             {
                 game.Run();
             }

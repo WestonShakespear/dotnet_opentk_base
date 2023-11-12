@@ -96,7 +96,7 @@ namespace Logic
                 circleA.Render();
                 // circleB.Render();
 
-                Square.Cut(circleA, square1, 7);
+                Square.Cut(circleA, square1, 8);
                 Square.Draw(square1);
                 Square.Render(square1);
             // }
@@ -160,6 +160,11 @@ namespace Logic
             GL.DeleteShader(VertShader);
             GL.DeleteShader(FragShader);
 
+            
+        }
+
+        public static void Init()
+        {
             square1.Create(SquareSize.Z, new Vector2(SquareSize.X, SquareSize.Y));
         }
 

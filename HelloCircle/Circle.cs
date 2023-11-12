@@ -10,8 +10,8 @@ namespace Drawing
 
         int VertexArray;
 
-        Vector2 Center;
-        float Radius;
+        public Vector2 Center;
+        public float Radius;
 
         public Circle()
         {

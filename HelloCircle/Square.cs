@@ -210,7 +210,10 @@ namespace Drawing
                 
                 max_level--;
 
-                Subdivide(square);
+                if (IsRoot(square))
+                {
+                    Subdivide(square);
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     SubdivideFromCircle(circle, square.SubSquare[i], max_level);

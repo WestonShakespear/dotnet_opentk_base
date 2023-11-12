@@ -414,31 +414,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\wes\\.nuget\\packages\\": {},
-    "D:\\Software\\VS\\SDK\\NuGetPackages": {}
+    "/home/westonshakespear/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
+      "projectUniqueName": "/home/westonshakespear/Github/dotnet_opentk_base/HelloCircle/HelloCircle.csproj",
       "projectName": "HelloCircle",
-      "projectPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\HelloCircle.csproj",
-      "packagesPath": "C:\\Users\\wes\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\wes\\github-repos\\dotnet_opentk_base\\HelloCircle\\obj\\",
+      "projectPath": "/home/westonshakespear/Github/dotnet_opentk_base/HelloCircle/HelloCircle.csproj",
+      "packagesPath": "/home/westonshakespear/.nuget/packages/",
+      "outputPath": "/home/westonshakespear/Github/dotnet_opentk_base/HelloCircle/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "D:\\Software\\VS\\SDK\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\wes\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/westonshakespear/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -473,12 +466,22 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[7.0.8, 7.0.8]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[7.0.8, 7.0.8]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/7.0.305/RuntimeIdentifierGraph.json"
       }
     }
   }
